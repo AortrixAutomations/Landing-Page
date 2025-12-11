@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://aortrix.com/sitemap.xml

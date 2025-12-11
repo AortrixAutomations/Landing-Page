@@ -1,0 +1,14 @@
+{
+  "name": "aortrix-website",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tailwindcss -i ./src/tailwind.css -o ./public/styles/tailwind.css --minify",
+    "watch": "tailwindcss -i ./src/tailwind.css -o ./public/styles/tailwind.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0"
+  }
+}
