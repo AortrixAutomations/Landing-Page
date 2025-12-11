@@ -1,0 +1,66 @@
+name: Build and deploy Aortrix site
+
+on:
+  push:
+    branches:
+      - main    # change if your default branch is different
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read         # read repository contents
+      pages: write           # allow deployment to GitHub Pages
+      id-token: write        # for advanced auth if needed
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build (Tailwind)
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Confirm build output
+        run: |
+          echo "Listing public/ (first 200 lines)"
+          ls -la public || true
+          du -sh public || true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v1
